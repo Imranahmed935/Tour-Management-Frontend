@@ -8,6 +8,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import config from "@/config";
 import { cn } from "@/lib/utils";
 import { useLoginMutation } from "@/redux/features/auth/auth.api";
 
@@ -25,9 +26,14 @@ export function LoginForm({
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     try {
       const res = await login(data).unwrap();
+      navigate("/")
       console.log(res);
     } catch (err) {
       console.error(err);
+
+      if (err.data.message === "Password does not match") {
+        toast.error("Invalid credentials");
+      }
 
       if (err.status === 401) {
         toast.error("Your account is not verified");
@@ -96,7 +102,8 @@ export function LoginForm({
           </span>
         </div>
 
-        <Button
+         <Button
+          onClick={() => window.open(`${config.baseUrl}/auth/google`)}
           type="button"
           variant="outline"
           className="w-full cursor-pointer"
